@@ -7,8 +7,8 @@ SELECT * FROM clients WHERE name like 'Joh%';
 
 -- read the name, phone, and email of clients outside New York
 SELECT c.name, c.phone, c.email FROM clients c
-    LEFT JOIN address a ON c.client_id = a.client_id
-WHERE a.city <> 'New York';
+    JOIN client_address ca on c.client_id = ca.client_id
+WHERE ca.city <> 'New York';
 
 -- Read 3 most recent meetings
 SELECT * FROM meetings
