@@ -8,8 +8,8 @@ CREATE TABLE clients (
 	client_id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	phone VARCHAR(20),
-	email VARCHAR(50) NOT NULL,
-	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	email VARCHAR(50) UNIQUE NOT NULL,
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Store client address data
@@ -33,14 +33,14 @@ CREATE TABLE meetings (
 	meeting_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	duration INT,
 	purpose VARCHAR(250),
-	location_id VARCHAR(100),
+	location_code VARCHAR(100),
 	FOREIGN KEY (client_id) REFERENCES clients(client_id),
-	FOREIGN KEY (location_id) REFERENCES locations(location_id)
+	FOREIGN KEY (location_code) REFERENCES locations(location_code)
 );
 
 -- Store locations data for meetings
 CREATE TABLE locations (
-     location_id VARCHAR(100) AUTO_INCREMENT PRIMARY KEY,
+     location_id INT AUTO_INCREMENT PRIMARY KEY,
      location_code VARCHAR(50) UNIQUE NOT NULL,
      location_name VARCHAR(100) NOT NULL,
      room_number VARCHAR(50),
@@ -58,7 +58,7 @@ INSERT INTO clients (name, phone, email) VALUES
 ('Jane Smith', '987-654-3210', 'jane@examples.com'),
 ('Alice Johnson', '555-123-4567', 'alice.johnson@example.com'),
 ('Michael Brown', '444-222-1111', 'michael.brown@example.com'),
-('Emily Davis', '333-888-7777', 'emily.davis@example.com');
+('Emily Davis', '333-888-7777', 'emily.davis@example.com'),
 ('Sarah Wilson', '222-333-4444', 'sarah.wilson@example.com');
 
 -- Insert sample data into address table
@@ -89,3 +89,22 @@ INSERT INTO locations (location_code, location_name, room_number, building, floo
 ('LOC006', '4th Floor Project War Room', '415', 'Main Building', 4),
 ('LOC007', '2nd Floor Breakout Lounge', '220', 'Main Building', 2),
 ('LOC008', 'Basement Materials Lab', 'B02', 'Main Building', -1);
+
+
+
+-- Grant SELECT privilege on employees table to office_user
+GRANT SELECT ON clients, meetings TO 'office_user'@'localhost';
+GRANT SELECT ON meetings TO 'office_user'@'localhost';
+
+
+-- Grant INSERT and UPDATE privilege on clients, meetings, and addresses to hr_manager
+GRANT INSERT, UPDATE ON clients TO 'office_manager'@'localhost';
+GRANT INSERT, UPDATE ON meetings TO 'office_manager'@'localhost';
+GRANT INSERT, UPDATE ON address TO 'office_manager'@'localhost';
+
+
+-- Revoke DELETE privilege from office_user
+REVOKE DELETE ON clients FROM 'office_user'@'localhost';
+
+-- Grant all privileges on multiple tables to office_admin
+GRANT ALL PRIVILEGES ON clients, meetings, locations, address TO 'office_admin'@'localhost';
