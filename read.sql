@@ -1,3 +1,5 @@
+USE client_db;
+
 -- read data from all clients
 SELECT * FROM clients;
 
@@ -16,4 +18,18 @@ LIMIT 5;
 SELECT c.name, m.meeting_date, m.purose, l.location_name FROM meetings m
     JOIN clients c on m.client_id = c.client_id
     JOIN locations l on l.location_id = m.location_id;
-WHERE l.location_name = 'New York';
+WHERE l.location_name = '2nd Floor Design Studio';
+
+-- Read all meetings happening on the senond floor
+SELECT c.name, m.meeting_date, m.purose, l.location_name FROM meetings m
+	JOIN locations l ON l.locations_id = m.location_id
+	JOIN clients c on c.client_id = m.clients_id
+WHERE m.floor = 2;
+
+-- Sample subquery to find clients with more than one meeting
+SELECT name, email FROM clients
+WHERE client_id IN (
+    SELECT client_id FROM meetings
+    GROUP BY client_id
+    HAVING COUNT(meeting_id) > 1
+);
